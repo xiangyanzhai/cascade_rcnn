@@ -62,6 +62,7 @@ class ProposalCreator(object):
         Score = []
         C = 0
 
+
         for i in range(5):
             map_H, map_W = map_HW[i]
 
@@ -69,18 +70,15 @@ class ProposalCreator(object):
             tscore = score[C:C + c]
             troi = roi[C:C + c]
             C += c
-
-            tscore, inds = tscore.sort(descending=True)
-            inds = inds[:n_post_nms]
-            troi = troi[inds]
-            tscore = tscore[:n_post_nms]
-
             hw = troi[:, 2:4] - troi[:, :2]
             inds = hw >= self.min_size[i]
             inds = inds.all(dim=1)
             troi = troi[inds]
             tscore = tscore[inds]
-
+            tscore, inds = tscore.sort(descending=True)
+            inds = inds[:n_post_nms]
+            troi = troi[inds]
+            tscore = tscore[:n_post_nms]
             Roi.append(troi)
             Score.append(tscore)
             nms_Roi.append(troi + i * 2 * max(h, w))
